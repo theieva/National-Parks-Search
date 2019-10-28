@@ -14,21 +14,23 @@ function displayResults(responseJson){
     }
     $('#results').removeClass('hidden');
 }
-
+function formatQueryParams(params) {
+    const queryItems = Object.keys(params)
+      .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
+    return queryItems.join('&');
+  }
+  
 function getResultsURL(searchTerm, maxResults=10){
     let states = searchTerm.split(" ");
-    let queryString = "";
+
     const params = {
         stateCode: states,
         limit: maxResults,
         api_key: apiKey
     };
-    
-    for (let i = 0; i < states.length; i++){
-        queryString+= `stateCode=${states[i]}&`;
-    }
-    queryString += `limit=${maxResults}&api_key=${apiKey}`;
-    const url = `${myURL}?${queryString}`;
+
+    const queryString = formatQueryParams(params);
+    const url = myURL + '?' + queryString;
     console.log(url);
 
     fetch(url).then(response =>{
@@ -45,7 +47,6 @@ function getResultsURL(searchTerm, maxResults=10){
 }
 
 function watchForm(){
-    console.log("watchForm ran");
     $('#myForm').submit(event =>{
         event.preventDefault();
         const searchTerm = $('#search-term').val();
